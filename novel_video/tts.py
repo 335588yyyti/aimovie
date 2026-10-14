@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import os
+import ssl
 import wave
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,9 +24,23 @@ class TTSConfig:
     retries: int = 3
 
 
+def _use_extra_ca() -> None:
+    """edge-tts 只信任 certifi 的憑證；有設定 SSL_CERT_FILE（例如公司代理）時一併信任。"""
+    ca = os.environ.get("SSL_CERT_FILE")
+    if not ca or not os.path.exists(ca):
+        return
+    import certifi
+    from edge_tts import communicate
+
+    ctx = ssl.create_default_context(cafile=certifi.where())
+    ctx.load_verify_locations(cafile=ca)
+    communicate._SSL_CTX = ctx
+
+
 async def _edge_synthesize(text: str, out: Path, cfg: TTSConfig) -> None:
     import edge_tts  # 延遲匯入：只用外部音檔時不需要安裝
 
+    _use_extra_ca()
     last_err: Exception | None = None
     for attempt in range(cfg.retries):
         try:
