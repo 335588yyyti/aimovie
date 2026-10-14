@@ -103,7 +103,7 @@ def test_end_to_end_with_existing_audio(tmp_path):
     out = tmp_path / "out"
 
     rc = cli.main([str(novel), "-o", str(out), "--audio", str(audio), "--bg", str(img),
-                   "--size", "horizontal", "--preset", "ultrafast", "--tail", "0.5"])
+                   "--size", "horizontal", "--bg-fit", "pad", "--preset", "ultrafast", "--tail", "0.5"])
     assert rc == 0
     assert probe_duration(out / "story.mp4") == pytest.approx(5.5, abs=0.15)
     assert not (out / "_work" / "story").exists()

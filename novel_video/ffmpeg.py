@@ -58,10 +58,16 @@ class VideoConfig:
     narration_volume: float = 1.0
     fade: float = 0.6
     shuffle: bool = True
+    fit: str = "crop"  # crop = 裁切填滿；pad = 等比縮小完整顯示，空白處補黑
 
 
 def _fit_filter(cfg: VideoConfig) -> str:
     w, h = cfg.width, cfg.height
+    if cfg.fit == "pad":
+        return (
+            f"scale={w}:{h}:force_original_aspect_ratio=decrease,"
+            f"pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black,setsar=1,fps={cfg.fps}"
+        )
     return (
         f"scale={w}:{h}:force_original_aspect_ratio=increase,"
         f"crop={w}:{h},setsar=1,fps={cfg.fps}"
@@ -86,7 +92,7 @@ def prepare_background(sources: list[Path], duration: float, work: Path, cfg: Vi
     clip_dir.mkdir(parents=True, exist_ok=True)
     clips: list[tuple[Path, float]] = []
     for i, f in enumerate(files):
-        out = clip_dir / f"clip_{i:03d}_{cfg.width}x{cfg.height}.mp4"
+        out = clip_dir / f"clip_{i:03d}_{cfg.width}x{cfg.height}_{cfg.fit}.mp4"
         if not out.exists():
             print(f"  整理背景素材 {f.name}")
             src = ["-loop", "1", "-t", "8", "-i", str(f)] if f.suffix.lower() in IMAGE_EXTS else ["-i", str(f)]

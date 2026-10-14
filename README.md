@@ -38,7 +38,7 @@ python -m novel_video 我的小說.txt --audio 旁白.mp3 --bg bg.mp4
 python -m novel_video --list-voices
 ```
 
-輸出在 `output/`：每章一支 `.mp4` 與對應的 `.srt`。配音會快取在 `output/_work/tts_cache/`，修改字幕樣式後重跑不必重新合成。
+輸出在 `output/`：每章一支 `.mp4`，以及對應的 `.srt` 字幕與 `.mp3` 旁白。配音會快取在 `output/_work/tts_cache/`，修改字幕樣式後重跑不必重新合成。
 
 ### 素材資料夾
 
@@ -64,6 +64,7 @@ assets/
 | `--sub-color` / `--outline-color` | 字幕顏色／描邊顏色（RRGGBB） | 白字黑邊 |
 | `--sub-position` | `bottom` / `center` / `top` | `bottom` |
 | `--title` | 畫面上方顯示的書名（會接章節名） | 無 |
+| `--bg-fit` | 背景比例不同時：`crop` 裁切填滿；`pad` 等比縮小完整顯示、兩側補黑 | `crop` |
 | `--dim` | 背景變暗程度 0~1 | `0.35` |
 | `--bgm-volume` | 背景音樂音量 | `0.12` |
 | `--no-chapters` / `--merge` / `--chapters` | 章節處理方式 | 每章一支 |
@@ -78,3 +79,18 @@ python -m pytest
 ```
 
 測試用正弦波代替真的 TTS，並用 ffmpeg 產生假背景，會實際跑完整個剪輯流程。
+
+## 在公司網路／代理後面使用
+
+如果 TTS 出現 `CERTIFICATE_VERIFY_FAILED`，把代理的憑證設定到 `SSL_CERT_FILE` 即可：
+
+```bash
+SSL_CERT_FILE=/path/to/ca-bundle.crt python -m novel_video ...
+```
+
+## 範例：直式背景 → 橫式影片
+
+```bash
+python -m novel_video novels/老祖出關.txt --no-chapters --size horizontal \
+    --bg-fit pad --dim 0 --bg 直式背景.mp4
+```

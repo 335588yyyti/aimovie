@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .ffmpeg import (
     AUDIO_EXTS, VideoConfig, collect_media, prepare_background, probe_duration, render_video, require_ffmpeg,
+    run_ffmpeg,
 )
 from .subtitles import Cue, SubtitleStyle, cues_for_sentence, proportional_timeline, write_ass, write_srt
 from .text import Chapter, build_chapters
@@ -84,6 +85,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--size", type=parse_size, default=SIZES["vertical"],
                    help="vertical(1080x1920) / horizontal(1920x1080) / square / 自訂 WxH")
     g.add_argument("--fps", type=int, default=30)
+    g.add_argument("--bg-fit", choices=["crop", "pad"], default="crop",
+                   help="背景比例不同時：crop 裁切填滿；pad 等比縮小完整顯示，兩側補黑")
     g.add_argument("--dim", type=float, default=0.35, help="背景變暗程度 0~1")
     g.add_argument("--bgm-volume", type=float, default=0.12, help="背景音樂音量（相對旁白）")
     g.add_argument("--crf", type=int, default=23, help="畫質（越小越好，檔案越大）")
@@ -140,6 +143,9 @@ def make_video(
 
     out_mp4 = args.output / f"{name}.mp4"
     write_srt(cues, args.output / f"{name}.srt")
+    if not args.audio:
+        # 另存旁白音檔，方便拿去其他剪輯軟體使用
+        run_ffmpeg(["-i", str(narration), "-c:a", "libmp3lame", "-b:a", "192k", str(args.output / f"{name}.mp3")])
     style = SubtitleStyle(
         font=args.font, font_size=args.font_size, color=args.sub_color,
         outline_color=args.outline_color, position=args.sub_position,
@@ -151,7 +157,7 @@ def make_video(
     duration = audio_len + args.tail
     vcfg = VideoConfig(
         width=width, height=height, fps=args.fps, dim=args.dim, crf=args.crf,
-        preset=args.preset, bgm_volume=args.bgm_volume,
+        preset=args.preset, bgm_volume=args.bgm_volume, fit=args.bg_fit,
     )
     bg_input = prepare_background(args.bg, duration, work_root, vcfg)
     print(f"  合成影片（{duration:.1f} 秒）…")
