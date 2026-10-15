@@ -14,7 +14,7 @@ from .ffmpeg import (
 )
 from .subtitles import Cue, SubtitleStyle, cues_for_sentence, proportional_timeline, write_ass, write_srt
 from .text import Chapter, build_chapters
-from .tts import TTSConfig, synthesize_narration
+from .tts import TTSConfig, synthesize_flowing, synthesize_narration
 
 SIZES = {"vertical": (1080, 1920), "horizontal": (1920, 1080), "square": (1080, 1080)}
 
@@ -67,7 +67,9 @@ def build_parser() -> argparse.ArgumentParser:
                    help="聲音，例如 zh-TW-HsiaoChenNeural、zh-TW-YunJheNeural、zh-CN-YunxiNeural")
     g.add_argument("--rate", default="+0%", help="語速，例如 +20%%、-10%%")
     g.add_argument("--pitch", default="+0Hz", help="音調，例如 +5Hz")
-    g.add_argument("--gap", type=float, default=0.25, help="句與句之間的停頓秒數")
+    g.add_argument("--tts-mode", choices=["flow", "sentence"], default="flow",
+                   help="flow：連續幾句一起合成，語調較連貫（預設）；sentence：每句分開合成")
+    g.add_argument("--gap", type=float, help="段落之間的停頓秒數（flow 預設 0.35，sentence 預設 0.25）")
     g.add_argument("--concurrency", type=int, default=4, help="同時合成幾句")
     g.add_argument("--list-voices", action="store_true", help="列出可用的中文聲音後結束")
 
@@ -134,9 +136,14 @@ def make_video(
     else:
         narration = work / "narration.wav"
         cfg = TTSConfig(voice=args.voice, rate=args.rate, pitch=args.pitch, concurrency=args.concurrency)
-        timeline = synthesize_narration(
-            [s.text for s in sentences], narration, work_root / "tts_cache", cfg, gap=args.gap
-        )
+        texts = [s.text for s in sentences]
+        if args.tts_mode == "flow":
+            breaks = {i for i, s in enumerate(sentences) if s.is_title}
+            gap = 0.35 if args.gap is None else args.gap
+            timeline = synthesize_flowing(texts, narration, work_root / "tts_cache", cfg, breaks=breaks, gap=gap)
+        else:
+            gap = 0.25 if args.gap is None else args.gap
+            timeline = synthesize_narration(texts, narration, work_root / "tts_cache", cfg, gap=gap)
         audio_len = timeline[-1][0] + timeline[-1][1]
 
     cues: list[Cue] = []

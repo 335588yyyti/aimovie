@@ -23,6 +23,7 @@ class Sentence:
 
     text: str
     lines: list[str] = field(default_factory=list)
+    is_title: bool = False
 
 
 @dataclass
@@ -131,7 +132,7 @@ def build_chapters(raw: str, max_chars: int = 18, detect_chapters: bool = True) 
     for title, body in split_chapters(raw, detect_chapters):
         ch = Chapter(title=title)
         if title:
-            ch.sentences.append(Sentence(text=title, lines=wrap_subtitle(title, max_chars)))
+            ch.sentences.append(Sentence(text=title, lines=wrap_subtitle(title, max_chars), is_title=True))
         for s in split_sentences(body):
             ch.sentences.append(Sentence(text=s, lines=wrap_subtitle(s, max_chars)))
         if ch.sentences:

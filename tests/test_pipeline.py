@@ -54,6 +54,13 @@ async def fake_synth(text, out, cfg):
     run_ffmpeg(["-f", "lavfi", "-i", f"sine=frequency=440:duration={dur}", str(out)])
 
 
+async def fake_synth_words(text, out, cfg):
+    # 假的逐詞時間點：每個可唸的字 0.1 秒，回傳 (開始, 長度, 文字)
+    await fake_synth(text, out, cfg)
+    spoken = [c for c in text if tts._speak(c)]
+    return [(i * 0.1, 0.1, c) for i, c in enumerate(spoken)]
+
+
 def _make_bg(dir_: Path):
     dir_.mkdir()
     run_ffmpeg(["-f", "lavfi", "-i", "testsrc=size=640x360:rate=25:duration=2", str(dir_ / "a.mp4")])
@@ -70,6 +77,7 @@ def _stream_info(path: Path) -> dict:
 
 def test_end_to_end_with_tts(tmp_path, monkeypatch):
     monkeypatch.setattr(tts, "_edge_synthesize", fake_synth)
+    monkeypatch.setattr(tts, "_edge_synthesize_words", fake_synth_words)
     novel = tmp_path / "novel.txt"
     novel.write_text(NOVEL, encoding="utf-8")
     _make_bg(tmp_path / "bg")
@@ -134,3 +142,21 @@ def test_intro_cover_and_looping_background(tmp_path):
     ).stdout
     r, g, b = frame[:3]
     assert r > 200 and g < 60 and b < 60
+
+
+def test_align_sentences_uses_word_timings():
+    sents = ["你好，世界。", "第二句！"]
+    words = [(0.0, 0.2, "你好"), (0.3, 0.2, "世界"), (1.0, 0.2, "第二"), (1.2, 0.1, "句")]
+    tl = tts.align_sentences(sents, words, 1.5)
+    assert tl[0] == (0.0, pytest.approx(1.0))
+    assert tl[1] == (pytest.approx(1.0), pytest.approx(0.5))
+    # 對不上時改用字數比例
+    tl = tts.align_sentences(sents, [(0.0, 0.1, "別的字")], 1.2)
+    assert tl[0][1] == pytest.approx(1.2 * 4 / 7)
+    assert tl[1][0] + tl[1][1] == pytest.approx(1.2)
+
+
+def test_make_chunks_isolates_titles_and_limits_size():
+    texts = ["第一章", "一二三。", "四五六。", "七八九。", "第二章", "十。"]
+    chunks = tts.make_chunks(texts, {0, 4}, max_chars=8)
+    assert chunks == [[0], [1, 2], [3], [4], [5]]
