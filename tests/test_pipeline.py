@@ -107,3 +107,30 @@ def test_end_to_end_with_existing_audio(tmp_path):
     assert rc == 0
     assert probe_duration(out / "story.mp4") == pytest.approx(5.5, abs=0.15)
     assert not (out / "_work" / "story").exists()
+
+
+def test_intro_cover_and_looping_background(tmp_path):
+    novel = tmp_path / "story.txt"
+    novel.write_text(NOVEL, encoding="utf-8")
+    audio = tmp_path / "voice.mp3"
+    run_ffmpeg(["-f", "lavfi", "-i", "sine=frequency=330:duration=5", str(audio)])
+    bg = tmp_path / "bg.mp4"  # 比旁白短，需要循環
+    run_ffmpeg(["-f", "lavfi", "-i", "testsrc=size=180x320:rate=25:duration=2", str(bg)])
+    cover = tmp_path / "cover.jpg"
+    run_ffmpeg(["-f", "lavfi", "-i", "color=c=red:s=640x360", "-frames:v", "1", str(cover)])
+    out = tmp_path / "out"
+
+    rc = cli.main([str(novel), "-o", str(out), "--audio", str(audio), "--bg", str(bg),
+                   "--size", "640x360", "--bg-fit", "pad", "--preset", "ultrafast", "--tail", "0.5",
+                   "--intro", str(cover), "--intro-duration", "1.5"])
+    assert rc == 0
+    video = out / "story.mp4"
+    assert probe_duration(video) == pytest.approx(7.0, abs=0.15)
+    # 第 0.5 秒應該是紅色封面
+    frame = subprocess.run(
+        ["ffmpeg", "-v", "error", "-ss", "0.5", "-i", str(video), "-frames:v", "1",
+         "-vf", "scale=1:1", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+        capture_output=True, check=True,
+    ).stdout
+    r, g, b = frame[:3]
+    assert r > 200 and g < 60 and b < 60

@@ -133,7 +133,10 @@ def render_video(
     cfg: VideoConfig,
     bgm: Path | None = None,
     fonts_dir: Path | None = None,
+    intro: Path | None = None,
+    intro_duration: float = 3.0,
 ) -> None:
+    """duration 是正片（旁白）長度；有 intro 時會先顯示封面 intro_duration 秒。"""
     vf = [_fit_filter(cfg)]
     if cfg.dim > 0:
         vf.append(f"drawbox=x=0:y=0:w=iw:h=ih:color=black@{cfg.dim:.2f}:t=fill")
@@ -144,15 +147,14 @@ def render_video(
     if cfg.fade > 0:
         vf.append(f"fade=t=in:st=0:d={cfg.fade}")
         vf.append(f"fade=t=out:st={max(0.0, duration - cfg.fade):.3f}:d={cfg.fade}")
-    filters = [f"[0:v]{','.join(vf)}[v]"]
-
     narr = f"[1:a]aresample=48000,volume={cfg.narration_volume},apad[narr]"
     inputs = [*bg_input, "-i", str(narration)]
+    filters = []
     if bgm:
         inputs += ["-stream_loop", "-1", "-i", str(bgm)]
         filters += [
             narr,
-            f"[2:a]aresample=48000,volume={cfg.bgm_volume}[bgm]",
+            f"[{inputs.count('-i') - 1}:a]aresample=48000,volume={cfg.bgm_volume}[bgm]",
             "[narr][bgm]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[mix]",
         ]
         last = "mix"
@@ -160,15 +162,33 @@ def render_video(
         filters.append(narr)
         last = "narr"
     if cfg.fade > 0:
-        filters.append(f"[{last}]afade=t=out:st={max(0.0, duration - cfg.fade):.3f}:d={cfg.fade}[a]")
+        filters.append(f"[{last}]afade=t=out:st={max(0.0, duration - cfg.fade):.3f}:d={cfg.fade}[a0]")
     else:
-        filters.append(f"[{last}]anull[a]")
+        filters.append(f"[{last}]anull[a0]")
+
+    total = duration
+    if intro:
+        # 封面圖當片頭：先播封面，再接背景影片＋旁白
+        idx = inputs.count("-i")
+        inputs += ["-loop", "1", "-framerate", str(cfg.fps), "-t", f"{intro_duration:.3f}", "-i", str(intro)]
+        w, h = cfg.width, cfg.height
+        vf += [f"trim=duration={duration:.3f}", "setpts=PTS-STARTPTS", "format=yuv420p"]
+        filters += [
+            f"[0:v]{','.join(vf)}[main]",
+            f"[{idx}:v]scale={w}:{h}:force_original_aspect_ratio=decrease,"
+            f"pad={w}:{h}:(ow-iw)/2:(oh-ih)/2:color=black,setsar=1,fps={cfg.fps},format=yuv420p[cover]",
+            "[cover][main]concat=n=2:v=1:a=0[v]",
+            f"[a0]adelay={int(intro_duration * 1000)}:all=1[a]",
+        ]
+        total += intro_duration
+    else:
+        filters += [f"[0:v]{','.join(vf)}[v]", "[a0]anull[a]"]
 
     run_ffmpeg([
         *inputs,
         "-filter_complex", ";".join(filters),
         "-map", "[v]", "-map", "[a]",
-        "-t", f"{duration:.3f}",
+        "-t", f"{total:.3f}",
         "-c:v", "libx264", "-preset", cfg.preset, "-crf", str(cfg.crf), "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
         "-movflags", "+faststart",

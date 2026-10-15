@@ -91,6 +91,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--bgm-volume", type=float, default=0.12, help="背景音樂音量（相對旁白）")
     g.add_argument("--crf", type=int, default=23, help="畫質（越小越好，檔案越大）")
     g.add_argument("--preset", default="veryfast", help="x264 速度 preset")
+    g.add_argument("--intro", type=Path, help="片頭封面圖片（先顯示封面，再開始旁白）")
+    g.add_argument("--intro-duration", type=float, default=3.0, help="片頭封面顯示秒數")
     g.add_argument("--tail", type=float, default=1.0, help="旁白結束後多留幾秒")
 
     g = p.add_argument_group("章節")
@@ -161,7 +163,10 @@ def make_video(
     )
     bg_input = prepare_background(args.bg, duration, work_root, vcfg)
     print(f"  合成影片（{duration:.1f} 秒）…")
-    render_video(bg_input, narration, ass, out_mp4, duration, vcfg, bgm=bgm, fonts_dir=args.fonts_dir)
+    render_video(
+        bg_input, narration, ass, out_mp4, duration, vcfg, bgm=bgm, fonts_dir=args.fonts_dir,
+        intro=args.intro, intro_duration=args.intro_duration,
+    )
     return out_mp4
 
 
