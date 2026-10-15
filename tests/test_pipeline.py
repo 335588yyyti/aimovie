@@ -171,3 +171,36 @@ def test_skip_titles_keeps_story_only():
     assert "書名在這裡" not in texts and not any(t.startswith("第") and "章" in t for t in texts)
     assert texts[0] == "那天晚上下著大雨，街上一個人也沒有。"
     assert [c.sentences[0].chapter_start for c in chapters] == [True, True]
+
+
+def test_scene_images_switch_at_anchor(tmp_path, monkeypatch):
+    monkeypatch.setattr(tts, "_edge_synthesize_words", fake_synth_words)
+    novel = tmp_path / "story.txt"
+    novel.write_text(NOVEL, encoding="utf-8")
+    scenes_dir = tmp_path / "scenes"
+    scenes_dir.mkdir()
+    for name, color in (("a.png", "red"), ("b.png", "blue")):
+        run_ffmpeg(["-f", "lavfi", "-i", f"color=c={color}:s=320x180", "-frames:v", "1", str(scenes_dir / name)])
+    (scenes_dir / "scenes.txt").write_text("# 測試\na.png | 那天晚上\nb.png | 三年後\n", encoding="utf-8")
+    out = tmp_path / "out"
+
+    rc = cli.main([str(novel), "-o", str(out), "--merge", "--no-read-titles", "--size", "320x180",
+                   "--scenes", str(scenes_dir / "scenes.txt"), "--dim", "0", "--preset", "ultrafast"])
+    assert rc == 0
+    video = out / "story.mp4"
+    srt = (out / "story.srt").read_text(encoding="utf-8")
+    assert "第一章" not in srt and "第二章" not in srt
+
+    def color_at(t):
+        frame = subprocess.run(
+            ["ffmpeg", "-v", "error", "-ss", str(t), "-i", str(video), "-frames:v", "1",
+             "-vf", "crop=20:20:0:0,scale=1:1", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+            capture_output=True, check=True,
+        ).stdout
+        return tuple(frame[:3])
+
+    total = probe_duration(video)
+    r, g, b = color_at(2)
+    assert r > 150 and b < 80  # 開頭是紅色場景
+    r, g, b = color_at(total - 2)
+    assert b > 150 and r < 80  # 「三年後」之後是藍色場景

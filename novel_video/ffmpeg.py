@@ -118,6 +118,48 @@ def prepare_background(sources: list[Path], duration: float, work: Path, cfg: Vi
     return ["-f", "concat", "-safe", "0", "-i", str(concat)]
 
 
+# 四種鏡頭運動輪流使用：拉近、拉遠、往右平移、往左平移（N = 總幀數，on = 目前幀）
+_MOTIONS = [
+    ("1+0.12*on/{n}", "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"),
+    ("1.12-0.12*on/{n}", "iw/2-(iw/zoom/2)", "ih/2-(ih/zoom/2)"),
+    ("1.12", "(iw-iw/zoom)*on/{n}", "ih/2-(ih/zoom/2)"),
+    ("1.12", "(iw-iw/zoom)*(1-on/{n})", "ih/2-(ih/zoom/2)"),
+]
+
+
+def build_scene_video(
+    images: list[Path], durations: list[float], work: Path, cfg: VideoConfig, fade: float = 0.6
+) -> Path:
+    """把每張場景插圖做成緩慢推拉／平移的片段，依序接成一支背景影片。"""
+    w, h = cfg.width, cfg.height
+    clip_dir = work / "scene_clips"
+    clip_dir.mkdir(parents=True, exist_ok=True)
+    clips = []
+    for i, (img, dur) in enumerate(zip(images, durations)):
+        n = max(2, round(dur * cfg.fps))
+        z, x, y = (e.format(n=n) for e in _MOTIONS[i % len(_MOTIONS)])
+        out = clip_dir / f"scene_{i:03d}.mp4"
+        d = n / cfg.fps
+        fd = min(fade, d / 4)
+        print(f"  場景 {i + 1}/{len(images)}：{img.name}（{d:.0f} 秒）")
+        vf = (
+            # 先放大兩倍再運鏡，移動才不會一格一格抖動
+            f"scale={w * 2}:{h * 2}:force_original_aspect_ratio=increase,crop={w * 2}:{h * 2},setsar=1,"
+            f"zoompan=z='{z}':x='{x}':y='{y}':d={n}:s={w}x{h}:fps={cfg.fps},"
+            f"fade=t=in:st=0:d={fd:.2f},fade=t=out:st={d - fd:.3f}:d={fd:.2f},format=yuv420p"
+        )
+        run_ffmpeg([
+            "-i", str(img), "-vf", vf, "-frames:v", str(n),
+            "-c:v", "libx264", "-preset", cfg.preset, "-crf", "20", "-r", str(cfg.fps), str(out),
+        ])
+        clips.append(out)
+    concat = work / "scenes_concat.txt"
+    concat.write_text("".join(f"file '{c.resolve()}'\n" for c in clips), encoding="utf-8")
+    out = work / "scenes_bg.mp4"
+    run_ffmpeg(["-f", "concat", "-safe", "0", "-i", str(concat), "-c", "copy", str(out)])
+    return out
+
+
 def _filter_path(p: Path) -> str:
     """ffmpeg filter 參數裡的路徑跳脫。"""
     s = str(p.resolve()).replace("\\", "/")

@@ -23,9 +23,9 @@ SAMPLE_RATE = 24000
 
 @dataclass
 class TTSConfig:
-    voice: str = "zh-TW-HsiaoChenNeural"
-    rate: str = "+0%"
-    pitch: str = "+0Hz"
+    voice: str = "zh-CN-XiaoxiaoNeural"
+    rate: str = "+10%"
+    pitch: str = "-10Hz"
     volume: str = "+0%"
     concurrency: int = 4
     retries: int = 3

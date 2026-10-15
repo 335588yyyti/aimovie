@@ -9,9 +9,10 @@ import sys
 from pathlib import Path
 
 from .ffmpeg import (
-    AUDIO_EXTS, VideoConfig, collect_media, prepare_background, probe_duration, render_video, require_ffmpeg,
+    AUDIO_EXTS, build_scene_video, VideoConfig, collect_media, prepare_background, probe_duration, render_video, require_ffmpeg,
     run_ffmpeg,
 )
+from .scenes import load_scenes, scene_durations
 from .subtitles import Cue, SubtitleStyle, cues_for_sentence, proportional_timeline, write_ass, write_srt
 from .text import Chapter, build_chapters
 from .tts import TTSConfig, synthesize_flowing, synthesize_narration
@@ -58,15 +59,17 @@ def build_parser() -> argparse.ArgumentParser:
     g = p.add_argument_group("素材")
     g.add_argument("--bg", type=Path, action="append", default=[],
                    help="背景影片/圖片，或放素材的資料夾；可重複指定。多個素材會隨機串接循環")
+    g.add_argument("--scenes", type=Path,
+                   help="場景插圖清單（每行「圖片檔 | 故事原文」），唸到該句就換圖，圖片會緩慢推拉平移")
     g.add_argument("--bgm", type=Path, help="背景音樂檔，或資料夾（隨機挑一首）")
     g.add_argument("--audio", type=Path,
                    help="使用現成的旁白音檔（不做 TTS），字幕會依字數比例對齊到整段音檔")
 
     g = p.add_argument_group("配音（edge-tts）")
-    g.add_argument("--voice", default="zh-TW-HsiaoChenNeural",
-                   help="聲音，例如 zh-TW-HsiaoChenNeural、zh-TW-YunJheNeural、zh-CN-YunxiNeural")
-    g.add_argument("--rate", default="+0%", help="語速，例如 +20%%、-10%%")
-    g.add_argument("--pitch", default="+0Hz", help="音調，例如 +5Hz")
+    g.add_argument("--voice", default="zh-CN-XiaoxiaoNeural",
+                   help="聲音（預設曉曉 zh-CN-XiaoxiaoNeural），例如 zh-TW-HsiaoChenNeural、zh-CN-YunxiNeural")
+    g.add_argument("--rate", default="+10%", help="語速，例如 +20%%、-10%%")
+    g.add_argument("--pitch", default="-10Hz", help="音調，例如 +5Hz")
     g.add_argument("--tts-mode", choices=["flow", "sentence"], default="flow",
                    help="flow：連續幾句一起合成，語調較連貫（預設）；sentence：每句分開合成")
     g.add_argument("--gap", type=float, help="段落之間的停頓秒數（flow 預設 0.35，sentence 預設 0.25）")
@@ -173,7 +176,13 @@ def make_video(
         width=width, height=height, fps=args.fps, dim=args.dim, crf=args.crf,
         preset=args.preset, bgm_volume=args.bgm_volume, fit=args.bg_fit,
     )
-    bg_input = prepare_background(args.bg, duration, work_root, vcfg)
+    if args.scenes:
+        scenes = load_scenes(args.scenes)
+        durations = scene_durations(scenes, sentences, timeline, duration)
+        bg_path = build_scene_video([img for img, _ in scenes], durations, work, vcfg)
+        bg_input = ["-i", str(bg_path)]
+    else:
+        bg_input = prepare_background(args.bg, duration, work_root, vcfg)
     print(f"  合成影片（{duration:.1f} 秒）…")
     render_video(
         bg_input, narration, ass, out_mp4, duration, vcfg, bgm=bgm, fonts_dir=args.fonts_dir,
