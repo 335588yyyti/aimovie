@@ -2,3 +2,5 @@ output/
 __pycache__/
 *.pyc
 .pytest_cache/
+novels/*_scenes/*.jpg
+novels/*_scenes/*.png
