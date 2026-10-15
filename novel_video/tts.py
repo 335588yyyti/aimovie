@@ -190,13 +190,16 @@ def align_sentences(sentences: list[str], words: Words | None, total: float) -> 
     return [(a, max(0.05, b - a)) for a, b in zip(starts, ends)]
 
 
-def make_chunks(texts: list[str], breaks: set[int], max_chars: int) -> list[list[int]]:
-    """把連續句子組成一段一段；breaks 裡的句子（例如章節標題）自成一段。"""
+def make_chunks(
+    texts: list[str], breaks: set[int], max_chars: int, starts: set[int] | None = None
+) -> list[list[int]]:
+    """把連續句子組成一段一段；breaks 裡的句子（例如章節標題）自成一段，starts 裡的句子開新的一段。"""
+    starts = starts or set()
     chunks: list[list[int]] = []
     cur: list[int] = []
     size = 0
     for i, t in enumerate(texts):
-        if cur and (i in breaks or (i - 1) in breaks or size + len(t) > max_chars):
+        if cur and (i in breaks or (i - 1) in breaks or i in starts or size + len(t) > max_chars):
             chunks.append(cur)
             cur, size = [], 0
         cur.append(i)
@@ -212,6 +215,7 @@ def synthesize_flowing(
     cache_dir: Path,
     cfg: TTSConfig,
     breaks: set[int] | None = None,
+    starts: set[int] | None = None,
     max_chars: int = 300,
     gap: float = 0.35,
     title_gap: float = 0.9,
@@ -219,9 +223,10 @@ def synthesize_flowing(
 ) -> list[tuple[float, float]]:
     """連續句子一起合成（語調較自然）。回傳每句 (開始秒數, 長度秒數)。"""
     breaks = breaks or set()
+    starts = starts or set()
     synth = synth or _edge_synthesize_words
     cache_dir.mkdir(parents=True, exist_ok=True)
-    chunks = make_chunks(texts, breaks, max_chars)
+    chunks = make_chunks(texts, breaks, max_chars, starts)
     sem = asyncio.Semaphore(cfg.concurrency)
     done = 0
 
@@ -261,7 +266,7 @@ def synthesize_flowing(
             t += dur
             if ci < len(chunks) - 1:
                 nxt = chunks[ci + 1][0]
-                pause = title_gap if (idx[-1] in breaks or nxt in breaks) else gap
+                pause = title_gap if (idx[-1] in breaks or nxt in breaks or nxt in starts) else gap
                 w.writeframes(b"\x00\x00" * int(SAMPLE_RATE * pause))
                 t += pause
     return timeline

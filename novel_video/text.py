@@ -24,6 +24,7 @@ class Sentence:
     text: str
     lines: list[str] = field(default_factory=list)
     is_title: bool = False
+    chapter_start: bool = False  # 每章內文的第一句
 
 
 @dataclass
@@ -127,14 +128,32 @@ def clean_line(line: str) -> str:
     return line.strip().strip(STRIP_PUNCT).strip()
 
 
-def build_chapters(raw: str, max_chars: int = 18, detect_chapters: bool = True) -> list[Chapter]:
+def _is_book_title(title: str, body: str, has_chapters: bool) -> bool:
+    """章節之前只有一行、沒有句末標點的短文字，視為書名。"""
+    return (
+        not title and has_chapters and "\n" not in body.strip()
+        and len(body.strip()) <= 40 and not SENTENCE_END_RE.fullmatch(body.strip())
+    )
+
+
+def build_chapters(
+    raw: str, max_chars: int = 18, detect_chapters: bool = True, read_titles: bool = True
+) -> list[Chapter]:
+    """read_titles=False 時不唸書名和章節標題，故事直接一路講下去。"""
     chapters: list[Chapter] = []
-    for title, body in split_chapters(raw, detect_chapters):
+    parts = split_chapters(raw, detect_chapters)
+    has_chapters = any(t for t, _ in parts)
+    for title, body in parts:
         ch = Chapter(title=title)
-        if title:
+        if _is_book_title(title, body, has_chapters):
+            if read_titles:
+                ch.sentences.append(Sentence(text=body.strip(), lines=wrap_subtitle(body.strip(), max_chars), is_title=True))
+                chapters.append(ch)
+            continue
+        if title and read_titles:
             ch.sentences.append(Sentence(text=title, lines=wrap_subtitle(title, max_chars), is_title=True))
-        for s in split_sentences(body):
-            ch.sentences.append(Sentence(text=s, lines=wrap_subtitle(s, max_chars)))
+        for i, s in enumerate(split_sentences(body)):
+            ch.sentences.append(Sentence(text=s, lines=wrap_subtitle(s, max_chars), chapter_start=(i == 0)))
         if ch.sentences:
             chapters.append(ch)
     return chapters

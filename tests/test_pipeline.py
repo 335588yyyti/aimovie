@@ -160,3 +160,14 @@ def test_make_chunks_isolates_titles_and_limits_size():
     texts = ["第一章", "一二三。", "四五六。", "七八九。", "第二章", "十。"]
     chunks = tts.make_chunks(texts, {0, 4}, max_chars=8)
     assert chunks == [[0], [1, 2], [3], [4], [5]]
+
+
+def test_skip_titles_keeps_story_only():
+    raw = "書名在這裡\n\n" + NOVEL
+    with_titles = build_chapters(raw, 14)
+    assert with_titles[0].sentences[0].text == "書名在這裡" and with_titles[0].sentences[0].is_title
+    chapters = build_chapters(raw, 14, read_titles=False)
+    texts = [s.text for c in chapters for s in c.sentences]
+    assert "書名在這裡" not in texts and not any(t.startswith("第") and "章" in t for t in texts)
+    assert texts[0] == "那天晚上下著大雨，街上一個人也沒有。"
+    assert [c.sentences[0].chapter_start for c in chapters] == [True, True]

@@ -98,6 +98,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--tail", type=float, default=1.0, help="旁白結束後多留幾秒")
 
     g = p.add_argument_group("章節")
+    g.add_argument("--no-read-titles", action="store_true",
+                   help="不唸書名和章節標題，故事一路講到結束（換章時只多停頓一下）")
     g.add_argument("--no-chapters", action="store_true", help="不偵測章節，整篇做成一支影片")
     g.add_argument("--merge", action="store_true", help="偵測章節但全部合成一支影片")
     g.add_argument("--chapters", type=parse_range, help="只做指定章節，例如 1-3,5")
@@ -139,8 +141,11 @@ def make_video(
         texts = [s.text for s in sentences]
         if args.tts_mode == "flow":
             breaks = {i for i, s in enumerate(sentences) if s.is_title}
+            starts = {i for i, s in enumerate(sentences) if s.chapter_start and i > 0}
             gap = 0.35 if args.gap is None else args.gap
-            timeline = synthesize_flowing(texts, narration, work_root / "tts_cache", cfg, breaks=breaks, gap=gap)
+            timeline = synthesize_flowing(
+                texts, narration, work_root / "tts_cache", cfg, breaks=breaks, starts=starts, gap=gap
+            )
         else:
             gap = 0.25 if args.gap is None else args.gap
             timeline = synthesize_narration(texts, narration, work_root / "tts_cache", cfg, gap=gap)
@@ -191,7 +196,9 @@ def main(argv: list[str] | None = None) -> int:
     raw = args.input.read_text(encoding="utf-8-sig", errors="replace")
     width, height = args.size
     max_chars = args.max_chars or (14 if height > width else 22)
-    chapters = build_chapters(raw, max_chars=max_chars, detect_chapters=not args.no_chapters)
+    chapters = build_chapters(
+        raw, max_chars=max_chars, detect_chapters=not args.no_chapters, read_titles=not args.no_read_titles
+    )
     if not chapters:
         print("文字檔裡沒有可朗讀的內容", file=sys.stderr)
         return 1
