@@ -9,45 +9,32 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <style>
-/* Layout: big piggy stage on the left (the projector view), teacher panel on the right; stacks on narrow screens. */
+/* Single bright theme on purpose: classroom projectors need a light, cheerful screen.
+   Layout: big piggy stage on the left (the projector view), teacher panel on the right; stacks on narrow screens. */
 :root {
-  --bg: #F7F6EE;
+  --bg: #FFFCF2;
   --surface: #FFFFFF;
-  --ink: #29483E;
-  --muted: #6B7C72;
-  --line: #E2E6D9;
-  --accent: #39795C;
-  --pig: #F7AFBF;
-  --pig-deep: #E07E97;
-  --pig-dark: #8C3E55;
-  --gold: #F4BC34;
-  --gold-deep: #C88A0A;
-  --quiet: #39795C;
-  --quiet-soft: #E6F0DF;
-  --noisy: #BF6A3F;
-  --noisy-soft: #F8E8DC;
-  --idle-soft: #EEF1E5;
+  --ink: #22403A;
+  --muted: #5B6F66;
+  --line: #E3EFD9;
+  --accent: #1F9457;
+  --pig: #FFB5C7;
+  --pig-deep: #F48BA6;
+  --pig-dark: #9B3D58;
+  --gold: #FFC93C;
+  --gold-deep: #D99A06;
+  --quiet: #1F9457;
+  --quiet-soft: #DDF6E5;
+  --noisy: #E8701F;
+  --noisy-soft: #FFE8D2;
+  --idle-soft: #EEF8E8;
   --danger: #C2493B;
   --on-accent: #FFFFFF;
   --font-display: "Chiron GoRound TC", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --radius: 18px;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #151B17; --surface: #1E2721; --ink: #E6EDE7; --muted: #9DAEA3; --line: #2F3B33;
-    --accent: #7DC29E; --pig-dark: #5E2536;
-    --quiet: #7DC29E; --quiet-soft: #1B3226; --noisy: #E8A07A; --noisy-soft: #3A2A20; --idle-soft: #222B25;
-    --danger: #EE7B6C; --on-accent: #10221A; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #151B17; --surface: #1E2721; --ink: #E6EDE7; --muted: #9DAEA3; --line: #2F3B33;
-  --accent: #7DC29E; --pig-dark: #5E2536;
-  --quiet: #7DC29E; --quiet-soft: #1B3226; --noisy: #E8A07A; --noisy-soft: #3A2A20; --idle-soft: #222B25;
-  --danger: #EE7B6C; --on-accent: #10221A; color-scheme: dark;
-}
-:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 [hidden] { display: none !important; }
@@ -92,6 +79,7 @@ button { cursor: pointer; }
 .stage {
   border-radius: 28px; padding: 22px clamp(14px, 3vw, 32px) 26px;
   background: var(--idle-soft); transition: background .6s ease;
+  background-image: radial-gradient(ellipse 70% 45% at 50% 30%, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0));
   display: flex; flex-direction: column; align-items: center; gap: 16px; min-width: 0;
 }
 .stage[data-state="quiet"] { background: var(--quiet-soft); }
@@ -161,7 +149,7 @@ button { cursor: pointer; }
 .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
 .rules { width: min(560px, 100%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.rule { background: var(--surface); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; border: 2px solid transparent; transition: border-color .4s; }
+.rule { background: var(--surface); box-shadow: 0 2px 8px rgba(34, 64, 58, .06); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; border: 2px solid transparent; transition: border-color .4s; }
 .rule strong { font-family: var(--font-display); font-size: 1rem; }
 .rule span { color: var(--muted); font-size: .92rem; font-variant-numeric: tabular-nums; }
 .rule-quiet strong { color: var(--quiet); }
@@ -169,7 +157,7 @@ button { cursor: pointer; }
 .stage[data-state="quiet"] .rule-quiet { border-color: var(--quiet); }
 .stage[data-state="noisy"] .rule-noisy { border-color: var(--noisy); }
 @media (max-width: 420px) { .rules { grid-template-columns: minmax(0, 1fr); } }
-.goal { width: min(560px, 100%); background: var(--surface); border-radius: var(--radius); padding: 14px 18px; display: grid; gap: 8px; }
+.goal { width: min(560px, 100%); background: var(--surface); box-shadow: 0 2px 8px rgba(34, 64, 58, .06); border-radius: var(--radius); padding: 14px 18px; display: grid; gap: 8px; }
 .goal-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .goal-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; min-width: 0; overflow-wrap: anywhere; }
 .goal-nums { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -784,6 +772,7 @@ body.projecting .goal-name { font-size: 1.5rem; }
     $('quietVal').textContent = running || mode === 'paused' ? Math.max(0, Math.ceil(st.quietSec - quietAcc)) + ' 秒' : '—';
     const showNoise = running && loudRun >= Math.min(st.graceSec, st.noisySec) && loudRun > 0;
     $('noiseRow').hidden = !showNoise;
+    $('quietRow').hidden = showNoise; // swap rows so the stage height stays the same
     if (showNoise) {
       $('noiseFill').style.width = clamp(noiseAcc / st.noisySec * 100, 0, 100) + '%';
       $('noiseVal').textContent = Math.max(0, Math.ceil(st.noisySec - noiseAcc)) + ' 秒';
