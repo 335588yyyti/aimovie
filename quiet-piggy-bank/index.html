@@ -11,40 +11,41 @@
 <style>
 /* Layout: big piggy stage on the left (the projector view), teacher panel on the right; stacks on narrow screens. */
 :root {
-  --bg: #F1F6FA;
+  --bg: #F7F6EE;
   --surface: #FFFFFF;
-  --ink: #26303C;
-  --muted: #5F6B7A;
-  --line: #D9E3EC;
-  --accent: #2F6DB0;
+  --ink: #29483E;
+  --muted: #6B7C72;
+  --line: #E2E6D9;
+  --accent: #39795C;
   --pig: #F7AFBF;
   --pig-deep: #E07E97;
   --pig-dark: #8C3E55;
   --gold: #F4BC34;
   --gold-deep: #C88A0A;
-  --quiet: #2F9A5E;
-  --quiet-soft: #E1F3E8;
-  --noisy: #D9732B;
-  --noisy-soft: #FCE9D9;
-  --idle-soft: #E9EFF5;
+  --quiet: #39795C;
+  --quiet-soft: #E6F0DF;
+  --noisy: #BF6A3F;
+  --noisy-soft: #F8E8DC;
+  --idle-soft: #EEF1E5;
   --danger: #C2493B;
+  --on-accent: #FFFFFF;
   --font-display: "Chiron GoRound TC", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
   --radius: 18px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #131A22; --surface: #1C2530; --ink: #E7EDF3; --muted: #9AA7B6; --line: #2E3B49;
-    --accent: #7FB2EA; --pig-dark: #5E2536;
-    --quiet: #5CC98A; --quiet-soft: #16352A; --noisy: #F09A55; --noisy-soft: #3B2718; --idle-soft: #212B37;
-    --danger: #EE7B6C; color-scheme: dark;
+    --bg: #151B17; --surface: #1E2721; --ink: #E6EDE7; --muted: #9DAEA3; --line: #2F3B33;
+    --accent: #7DC29E; --pig-dark: #5E2536;
+    --quiet: #7DC29E; --quiet-soft: #1B3226; --noisy: #E8A07A; --noisy-soft: #3A2A20; --idle-soft: #222B25;
+    --danger: #EE7B6C; --on-accent: #10221A; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #131A22; --surface: #1C2530; --ink: #E7EDF3; --muted: #9AA7B6; --line: #2E3B49;
-  --accent: #7FB2EA; --pig-dark: #5E2536;
-  --quiet: #5CC98A; --quiet-soft: #16352A; --noisy: #F09A55; --noisy-soft: #3B2718; --idle-soft: #212B37;
-  --danger: #EE7B6C; color-scheme: dark;
+  --bg: #151B17; --surface: #1E2721; --ink: #E6EDE7; --muted: #9DAEA3; --line: #2F3B33;
+  --accent: #7DC29E; --pig-dark: #5E2536;
+  --quiet: #7DC29E; --quiet-soft: #1B3226; --noisy: #E8A07A; --noisy-soft: #3A2A20; --idle-soft: #222B25;
+  --danger: #EE7B6C; --on-accent: #10221A; color-scheme: dark;
 }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 * { box-sizing: border-box; }
@@ -75,11 +76,11 @@ button { cursor: pointer; }
 .btn:hover { background: var(--idle-soft); }
 .btn:active { transform: scale(.97); }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .btn-primary:hover { background: var(--accent); filter: brightness(1.08); }
-.btn-quiet { background: var(--quiet); border-color: var(--quiet); color: #fff; }
+.btn-quiet { background: var(--quiet); border-color: var(--quiet); color: var(--on-accent); }
 .btn-quiet:hover { background: var(--quiet); filter: brightness(1.08); }
-.btn-warm { background: var(--noisy); border-color: var(--noisy); color: #fff; }
+.btn-warm { background: var(--noisy); border-color: var(--noisy); color: var(--on-accent); }
 .btn-warm:hover { background: var(--noisy); filter: brightness(1.08); }
 .btn-danger { color: var(--danger); border-color: var(--danger); }
 .btn-big { font-size: 1.25rem; padding: 12px 34px; min-height: 56px; }
@@ -159,6 +160,15 @@ button { cursor: pointer; }
 
 .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
+.rules { width: min(560px, 100%); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rule { background: var(--surface); border-radius: 14px; padding: 10px 14px; display: grid; gap: 2px; border: 2px solid transparent; transition: border-color .4s; }
+.rule strong { font-family: var(--font-display); font-size: 1rem; }
+.rule span { color: var(--muted); font-size: .92rem; font-variant-numeric: tabular-nums; }
+.rule-quiet strong { color: var(--quiet); }
+.rule-noisy strong { color: var(--noisy); }
+.stage[data-state="quiet"] .rule-quiet { border-color: var(--quiet); }
+.stage[data-state="noisy"] .rule-noisy { border-color: var(--noisy); }
+@media (max-width: 420px) { .rules { grid-template-columns: minmax(0, 1fr); } }
 .goal { width: min(560px, 100%); background: var(--surface); border-radius: var(--radius); padding: 14px 18px; display: grid; gap: 8px; }
 .goal-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .goal-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; min-width: 0; overflow-wrap: anywhere; }
@@ -205,10 +215,10 @@ body.projecting .panel, body.projecting .topbar { display: none; }
 body.projecting .layout { grid-template-columns: minmax(0, 1fr); max-width: 1400px; }
 body.projecting .stage { min-height: calc(100vh - 44px); justify-content: center; gap: 22px; }
 body.projecting .status { font-size: clamp(1.8rem, min(5vw, 6vh), 3.6rem); }
-body.projecting .piggy-wrap { width: min(520px, 70vw, 27vh * 1.2); }
-body.projecting .stage { gap: 14px; padding-block: 16px; }
-body.projecting .count-num { font-size: clamp(4rem, min(14vw, 15vh), 10rem); }
-body.projecting .goal, body.projecting .timers { width: min(820px, 100%); font-size: 1.15rem; }
+body.projecting .piggy-wrap { width: min(520px, 70vw, 21vh * 1.2); }
+body.projecting .stage { gap: 12px; padding-block: 14px; }
+body.projecting .count-num { font-size: clamp(3.6rem, min(14vw, 13vh), 10rem); }
+body.projecting .goal, body.projecting .timers, body.projecting .rules { width: min(820px, 100%); font-size: 1.15rem; }
 body.projecting .goal-name { font-size: 1.5rem; }
 
 /* Overlays */
@@ -233,7 +243,7 @@ body.projecting .goal-name { font-size: 1.5rem; }
 <header class="topbar">
   <div class="brand">
     <h1>安靜存錢筒</h1>
-    <small>安靜存金幣，全班一起達成目標</small>
+    <small>小小聲，大大收穫</small>
   </div>
   <div class="top-actions">
     <button class="btn" id="btnGuide" type="button">使用說明</button>
@@ -245,7 +255,7 @@ body.projecting .goal-name { font-size: 1.5rem; }
 
 <main class="layout">
   <section class="stage" id="stage" data-state="idle" aria-live="polite">
-    <p class="status" id="status">按下「開始」，一起來存金幣吧！</p>
+    <p class="status" id="status">準備好一起存錢了嗎？</p>
     <p class="substatus" id="substatus">聲音只在這台裝置上分析，不錄音、不上傳</p>
 
     <div class="piggy-wrap" id="piggyWrap">
@@ -279,6 +289,11 @@ body.projecting .goal-name { font-size: 1.5rem; }
       <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="var(--gold)" stroke="var(--gold-deep)" stroke-width="4"/><circle cx="32" cy="32" r="19" fill="none" stroke="var(--gold-deep)" stroke-width="3" opacity=".6"/><path d="M26 22 h12 M32 22 v20 M25 42 h14" stroke="var(--gold-deep)" stroke-width="4" stroke-linecap="round"/></svg>
       <span class="count-num" id="coinNum">0</span>
       <span class="count-unit">枚</span>
+    </div>
+
+    <div class="rules">
+      <div class="rule rule-quiet"><strong>🌿 安靜累積</strong><span id="ruleQuiet">連續安靜 10 秒，＋1 枚</span></div>
+      <div class="rule rule-noisy"><strong>🍂 吵鬧提醒</strong><span id="ruleNoisy">連續吵鬧 3 秒，−1 枚</span></div>
     </div>
 
     <div class="timers">
@@ -684,15 +699,15 @@ body.projecting .goal-name { font-size: 1.5rem; }
     const stage = $('stage');
     stage.dataset.state = st === 'quiet' || st === 'noisy' ? st : 'idle';
     const text = {
-      idle: ['按下「開始」，一起來存金幣吧！', '聲音只在這台裝置上分析，不錄音、不上傳'],
+      idle: ['準備好一起存錢了嗎？', '聲音只在這台裝置上分析，不錄音、不上傳'],
       quiet: ['好棒！繼續保持安靜', '安靜 ' + S.settings.quietSec + ' 秒就能存 ' + S.settings.addAmt + ' 枚金幣'],
-      noisy: ['讓我們把音量放輕一點', '安靜下來就不會扣金幣喔'],
+      noisy: ['讓我們把音量放輕一點', '小小聲，找回專注，就不會扣金幣喔'],
       calib: ['正在聆聽教室的安靜聲音…', '請大家保持安靜 5 秒'],
       paused: pauseReason === 'hidden'
         ? ['已自動暫停', '剛才切換到其他分頁，按「繼續」重新計分']
         : pauseReason === 'mic'
           ? ['麥克風中斷，已暫停', '請檢查麥克風後按「繼續」']
-          : ['暫停中', '講解或討論時不計分，準備好就按「繼續」'],
+          : ['休息一下，等等再出發', '暫停期間不會加幣或扣幣，準備好就按「繼續」'],
       nomic: ['麥克風無法使用', '老師仍可在右側手動加幣、扣幣']
     }[st];
     $('status').textContent = text[0];
@@ -754,6 +769,8 @@ body.projecting .goal-name { font-size: 1.5rem; }
     $('inGoalName').value = S.goal.name;
     $('inGoalTarget').value = S.goal.target;
     $('thMark').style.left = 'calc(' + st.threshold + '% - 1.5px)';
+    $('ruleQuiet').textContent = '連續安靜 ' + st.quietSec + ' 秒，＋' + st.addAmt + ' 枚';
+    $('ruleNoisy').textContent = '連續吵鬧 ' + st.noisySec + ' 秒，−' + st.subAmt + ' 枚';
     $('btnAdd').textContent = '＋ 加 ' + st.addAmt + ' 枚';
     $('btnSub').textContent = '－ 扣 ' + st.subAmt + ' 枚';
   }
