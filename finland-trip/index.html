@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070d1f">
+<meta name="robots" content="noindex, nofollow">
+<title>芬蘭極光家族旅遊</title>
+<style>
+:root{
+  --bg:#070d1f; --bg2:#0d1833; --card:#111f3d; --card2:#162a4f;
+  --line:rgba(255,255,255,.09); --text:#e9f0fb; --muted:#9fb1cf;
+  --green:#46e6a3; --teal:#2fc3b4; --violet:#9a8cff; --warn:#ffd27a; --red:#ff8a8a;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%,#fff8 50%,transparent 51%),
+    radial-gradient(1px 1px at 72% 9%,#fff6 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 40% 30%,#fff5 50%,transparent 51%),
+    radial-gradient(1px 1px at 88% 40%,#fff6 50%,transparent 51%),
+    radial-gradient(1px 1px at 25% 60%,#fff4 50%,transparent 51%),
+    radial-gradient(1px 1px at 60% 75%,#fff4 50%,transparent 51%);
+  background-attachment:fixed;
+}
+a{color:var(--green)}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;padding:56px 0 40px;text-align:center}
+.aurora{position:absolute;inset:-40% -20% auto -20%;height:340px;pointer-events:none;filter:blur(38px);opacity:.75}
+.aurora span{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 14s ease-in-out infinite alternate}
+.aurora span:nth-child(1){left:5%;top:40%;width:60%;height:120px;background:var(--green)}
+.aurora span:nth-child(2){left:40%;top:55%;width:55%;height:100px;background:var(--teal);animation-delay:-5s}
+.aurora span:nth-child(3){left:25%;top:30%;width:40%;height:80px;background:var(--violet);opacity:.6;animation-delay:-9s}
+@keyframes drift{from{transform:translateX(-6%) skewX(-8deg)}to{transform:translateX(8%) skewX(10deg)}}
+@media (prefers-reduced-motion:reduce){.aurora span{animation:none}html{scroll-behavior:auto}}
+.hero .wrap{position:relative}
+.eyebrow{display:inline-block;font-size:13px;letter-spacing:.12em;color:var(--green);border:1px solid rgba(70,230,163,.35);padding:3px 12px;border-radius:99px;background:rgba(70,230,163,.07)}
+h1{font-size:30px;line-height:1.3;margin:14px 0 6px;letter-spacing:.04em}
+.sub{color:var(--muted);margin:0}
+.count{margin:28px auto 0;max-width:420px;background:rgba(17,31,61,.7);border:1px solid var(--line);border-radius:22px;padding:22px 16px;backdrop-filter:blur(6px)}
+.count .label{color:var(--muted);font-size:14px}
+.count .num{font-size:68px;font-weight:800;line-height:1.1;color:var(--green);font-variant-numeric:tabular-nums;text-shadow:0 0 28px rgba(70,230,163,.45)}
+.count .num small{font-size:22px;color:var(--text);font-weight:600;margin-left:4px}
+.count .detail{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- Nav ---------- */
+nav{position:sticky;top:0;z-index:10;background:rgba(7,13,31,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:8px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{flex:0 0 auto;text-decoration:none;color:var(--text);font-size:14px;padding:6px 13px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+nav a:active{background:var(--card2)}
+
+/* ---------- Sections ---------- */
+section{padding:34px 0 6px;scroll-margin-top:56px}
+h2{font-size:22px;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+h2::before{content:"";width:6px;height:22px;border-radius:3px;background:linear-gradient(var(--green),var(--teal))}
+h3{font-size:17px;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.note{border-left:3px solid var(--warn);background:rgba(255,210,122,.07);padding:10px 12px;border-radius:0 10px 10px 0;font-size:14px;margin:10px 0}
+.note.green{border-color:var(--green);background:rgba(70,230,163,.07)}
+
+/* flights */
+.flight{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+.flight .t{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.flight .c{font-size:14px;color:var(--muted)}
+.flight .arrow{color:var(--green);font-size:22px}
+.plus{font-size:13px;color:var(--warn);vertical-align:super}
+.tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:99px;background:var(--card2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.g{color:var(--bg);background:var(--green);border-color:transparent;font-weight:700}
+.tag.v{color:#e8e4ff;background:rgba(154,140,255,.22);border-color:rgba(154,140,255,.4)}
+.tag.carry{color:#bff5dc;background:rgba(70,230,163,.14);border-color:rgba(70,230,163,.35)}
+.tag.check{color:#ffe2a8;background:rgba(255,210,122,.12);border-color:rgba(255,210,122,.35)}
+
+/* day cards */
+.day{position:relative}
+.day.today{border-color:var(--green);box-shadow:0 0 0 1px var(--green),0 0 24px rgba(70,230,163,.2)}
+.dhead{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dnum{flex:0 0 auto;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--green),var(--teal));color:#05261a;font-size:17px}
+.dtitle{flex:1;min-width:0}
+.dtitle .date{font-size:13px;color:var(--muted)}
+.dtitle .name{font-weight:700;font-size:17px;line-height:1.4}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.rows{margin:0;padding:0;list-style:none;font-size:15px}
+.rows li{display:flex;gap:10px;padding:6px 0;border-top:1px dashed var(--line)}
+.rows li:first-child{border-top:0}
+.rows b{flex:0 0 2.6em;color:var(--muted);font-weight:600}
+.outfit{margin-top:10px;background:rgba(70,230,163,.08);border:1px solid rgba(70,230,163,.25);border-radius:12px;padding:10px 12px;font-size:15px}
+.outfit strong{color:var(--green)}
+
+/* checklist */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;font:inherit;font-size:15px;color:var(--text);background:var(--card);border:1px solid var(--line);padding:7px 14px;border-radius:12px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--green);color:#05261a;font-weight:700;border-color:transparent}
+.tabs button .cnt{font-size:12px;opacity:.75;margin-left:4px}
+.progress{height:8px;background:var(--card2);border-radius:99px;overflow:hidden;margin:6px 0 4px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--green));transition:width .3s}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{border-top:1px solid var(--line)}
+.plist li:first-child{border-top:0}
+.plist label{display:flex;align-items:flex-start;gap:12px;padding:11px 2px;cursor:pointer}
+.plist input{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:24px;height:24px;margin:1px 0 0;border:2px solid var(--muted);border-radius:7px;display:grid;place-items:center;cursor:pointer;background:transparent}
+.plist input:checked{background:var(--green);border-color:var(--green)}
+.plist input:checked::after{content:"";width:6px;height:11px;border:solid #05261a;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.plist input:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.plist .txt{flex:1;min-width:0}
+.plist .txt em{display:block;font-style:normal;font-size:13px;color:var(--muted)}
+.plist input:checked ~ .txt{opacity:.5;text-decoration:line-through}
+.ctrl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-size:13px;color:var(--muted);background:transparent;border:1px solid var(--line);padding:5px 12px;border-radius:10px;cursor:pointer}
+
+/* layers */
+.layers{display:grid;gap:8px;margin:6px 0 12px}
+.layer{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--card2)}
+.layer .n{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:rgba(70,230,163,.15);color:var(--green)}
+ul.dots{margin:0;padding-left:1.2em}
+ul.dots li{margin:4px 0}
+
+/* timeline todo */
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.tl li:first-child{border-top:0}
+.tl .when{flex:0 0 auto;min-width:72px;font-weight:700;color:var(--warn)}
+.tl .left{display:block;font-size:12px;color:var(--muted);font-weight:400}
+
+/* info grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.info .k{font-size:13px;color:var(--muted)}
+.info .v{font-weight:600;line-height:1.5}
+.info.wide{grid-column:1/-1}
+@media (max-width:380px){.grid{grid-template-columns:1fr}.count .num{font-size:58px}}
+
+footer{padding:36px 0 48px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="wrap">
+    <span class="eyebrow">2027 · 冬 · 家族旅行</span>
+    <h1>芬蘭極光家族旅遊</h1>
+    <p class="sub">慕尼黑 → 羅凡尼亞米 → 凱米 → 赫爾辛基｜10 天</p>
+    <div class="count" id="countdown" aria-live="polite">
+      <div class="label" id="cdLabel">距離 2027/1/25 出發還有</div>
+      <div class="num" id="cdNum">–<small>天</small></div>
+      <div class="detail" id="cdDetail">1/25（一）23:25 桃園起飛</div>
+    </div>
+  </div>
+</header>
+
+<nav aria-label="區塊導覽">
+  <div class="wrap">
+    <a href="#overview">行程總覽</a>
+    <a href="#days">每日行程</a>
+    <a href="#packing">行李清單</a>
+    <a href="#wear">穿搭指南</a>
+    <a href="#todo">日期待辦</a>
+    <a href="#info">實用資訊</a>
+    <a href="#confirm">待確認</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- 2. 行程總覽 -->
+  <section id="overview">
+    <h2>行程總覽</h2>
+    <div class="card">
+      <h3>雄獅「特選芬蘭幸福極光10日」</h3>
+      <p class="muted small" style="margin:0">團號 27ED125BRC-T｜2027/1/25（一）～ 2/3（三）</p>
+    </div>
+    <div class="card">
+      <div class="ctrl" style="margin-bottom:10px"><strong>去程</strong><span class="tag">1/25（一）長榮</span></div>
+      <div class="flight">
+        <div><div class="t">23:25</div><div class="c">桃園 TPE</div></div>
+        <div class="arrow">✈</div>
+        <div><div class="t">07:05<span class="plus">+1</span></div><div class="c">慕尼黑 MUC</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctrl" style="margin-bottom:10px"><strong>回程</strong><span class="tag">2/2（二）長榮</span></div>
+      <div class="flight">
+        <div><div class="t">11:30</div><div class="c">慕尼黑 MUC</div></div>
+        <div class="arrow">✈</div>
+        <div><div class="t">06:30<span class="plus">+1</span></div><div class="c">桃園 TPE</div></div>
+      </div>
+      <p class="muted small" style="margin:10px 0 0;text-align:center">2/3（三）清晨抵台</p>
+    </div>
+    <div class="note green">追極光安排在 D4、D5、D6 三個晚上。極光是自然現象，<strong>不保證看得到</strong>，看天氣與太陽活動。</div>
+  </section>
+
+  <!-- 3. 每日行程 -->
+  <section id="days">
+    <h2>每日行程</h2>
+    <div class="note">D4–D6 其中一晚住<strong>極光玻璃屋</strong>（Northern Lights Village 或同級），哪一晚待確認；其他晚住 Scandic Rovaniemi City／Pohjanhovi／Arctic City Hotel 或同級。</div>
+    <div id="dayList"></div>
+  </section>
+
+  <!-- 4. 行李清單 -->
+  <section id="packing">
+    <h2>行李清單</h2>
+    <div class="tabs" role="tablist" id="packTabs" aria-label="行李清單分頁"></div>
+    <div class="card" id="packPanel" role="tabpanel">
+      <div class="ctrl">
+        <span class="small muted" id="packProg">已打包 0 / 0</span>
+        <button class="btn" type="button" id="packReset">清除本頁勾選</button>
+      </div>
+      <div class="progress"><i id="packBar"></i></div>
+      <ul class="plist" id="packList"></ul>
+    </div>
+    <p class="small muted">
+      <span class="tag carry">隨身</span> 帶上飛機的手提行李
+      <span class="tag">託運</span> 放大行李箱<br>
+      超過 100ml 的液體（乳液、大瓶藥水等）一律放託運；行動電源只能隨身、不能託運。
+    </p>
+  </section>
+
+  <!-- 5. 穿搭指南 -->
+  <section id="wear">
+    <h2>怕冷穿搭指南</h2>
+    <div class="card">
+      <h3>洋蔥式三層穿法</h3>
+      <div class="layers">
+        <div class="layer"><span class="n">1</span><div><strong>排汗內層</strong><div class="small muted">超極暖衛生衣褲、美麗諾羊毛</div></div></div>
+        <div class="layer"><span class="n">2</span><div><strong>保暖中層</strong><div class="small muted">刷毛衣、羽絨內層</div></div></div>
+        <div class="layer"><span class="n">3</span><div><strong>防風外層</strong><div class="small muted">防風防水外套＋雪褲</div></div></div>
+      </div>
+      <ul class="dots">
+        <li><strong>進室內立刻脫外套</strong>，避免流汗；汗濕了再出門會更冷。</li>
+        <li><strong>等極光時最冷</strong>（站著不動、深夜），全部穿上＋暖暖包（貼背、手握、腳底）。</li>
+        <li><strong>羊毛襪優於發熱襪</strong>；不要穿兩雙厚襪，鞋子太緊血液不流通反而腳冰。</li>
+        <li>頭、脖子、手、腳最容易失溫：毛帽要蓋耳，脖圍可拉上遮臉。</li>
+        <li>手套：觸控內層手套（拍照用）＋外層滑雪手套或連指手套。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. 重要日期與待辦 -->
+  <section id="todo">
+    <h2>重要日期與待辦</h2>
+    <div class="card">
+      <ul class="tl">
+        <li><span class="when">12/26 前<span class="left" data-due="2026-12-26"></span></span><div>告知旅行社<strong>特殊餐食、房型需求</strong>（出發前 30 天）</div></li>
+        <li><span class="when">1/18 前<span class="left" data-due="2027-01-18"></span></span><div><strong>護照正本交旅行社</strong>（出發前 7 天）<br><span class="small muted">護照效期要到 <strong style="color:var(--warn)">2027/8/3 以後</strong>，請每人先檢查！</span></div></li>
+        <li><span class="when">待確認</span><div>行前說明會（時間地點待旅行社通知）</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. 實用資訊 -->
+  <section id="info">
+    <h2>實用資訊</h2>
+    <div class="grid">
+      <div class="info"><div class="k">時差</div><div class="v">芬蘭 比台灣慢 6 小時<br>德國 比台灣慢 7 小時</div></div>
+      <div class="info"><div class="k">電壓／插頭</div><div class="v">220–240V<br>雙圓孔插頭</div></div>
+      <div class="info"><div class="k">託運行李（長榮）</div><div class="v">經濟艙每人 2 件<br>每件 23kg</div></div>
+      <div class="info"><div class="k">小費建議</div><div class="v">領隊／司機 每人 €120<br>床頭 每房每晚 €1</div></div>
+      <div class="info wide"><div class="k">飯店備品</div><div class="v">不提供拖鞋、牙刷、牙膏，要自己帶</div></div>
+      <div class="info wide"><div class="k">熱水</div><div class="v">鍋爐式供水，不熱時等 30–60 分鐘再試</div></div>
+      <div class="info wide"><div class="k">安全</div><div class="v">遊覽車上不要留貴重物品</div></div>
+      <div class="info wide"><div class="k">機票</div><div class="v">寒假旺季團體機票，開票後<strong style="color:var(--red)">不可退票、不可改名</strong></div></div>
+    </div>
+  </section>
+
+  <!-- 8. 待旅行社確認 -->
+  <section id="confirm">
+    <h2>待旅行社確認</h2>
+    <div class="card">
+      <div class="ctrl">
+        <span class="small muted" id="cfProg">已確認 0 / 0</span>
+        <button class="btn" type="button" id="cfReset">清除勾選</button>
+      </div>
+      <div class="progress"><i id="cfBar"></i></div>
+      <ul class="plist" id="cfList"></ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  打勾紀錄只存在這支手機／這台電腦的瀏覽器裡<br>
+  祝全家旅途平安、看到滿天極光 🌌
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 安全的 localStorage ---------- */
+  var PREFIX = "fa27:";
+  var store = {
+    get: function(k){ try { return window.localStorage.getItem(PREFIX + k); } catch(e){ return null; } },
+    set: function(k, v){ try { window.localStorage.setItem(PREFIX + k, v); } catch(e){} },
+    del: function(k){ try { window.localStorage.removeItem(PREFIX + k); } catch(e){} }
+  };
+
+  function el(tag, cls, html){
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+
+  /* ---------- 1. 倒數 ---------- */
+  var DEPART = new Date("2027-01-25T23:25:00+08:00").getTime();
+  var TRIP_START = new Date("2027-01-25T00:00:00+08:00").getTime();
+  var HOME = new Date("2027-02-03T06:30:00+08:00").getTime();
+  var DAY = 86400000;
+
+  function twDayIndex(now){
+    // 以台灣時間計算今天是行程第幾天（1–10），不在行程中回傳 0
+    var idx = Math.floor((now - TRIP_START) / DAY) + 1;
+    return (idx >= 1 && idx <= 10) ? idx : 0;
+  }
+
+  function tick(){
+    var now = Date.now();
+    var num = document.getElementById("cdNum");
+    var lab = document.getElementById("cdLabel");
+    var det = document.getElementById("cdDetail");
+    if (now < DEPART){
+      var diff = DEPART - now;
+      var d = Math.floor(diff / DAY);
+      var h = Math.floor(diff % DAY / 3600000);
+      var m = Math.floor(diff % 3600000 / 60000);
+      lab.textContent = "距離 2027/1/25 出發還有";
+      num.innerHTML = d + "<small>天</small>";
+      det.textContent = d + " 天 " + h + " 小時 " + m + " 分｜1/25（一）23:25 桃園起飛";
+    } else if (now < HOME){
+      var di = twDayIndex(now) || 9;
+      lab.textContent = "旅途進行中";
+      num.innerHTML = "D" + di + "<small>/ 10</small>";
+      det.textContent = "玩得開心，記得多穿一層！";
+    } else {
+      lab.textContent = "旅程圓滿結束";
+      num.innerHTML = "歡迎回家<small></small>";
+      det.textContent = "2/3（三）平安抵達桃園";
+    }
+  }
+  tick();
+  setInterval(tick, 30000);
+
+  // 待辦剩餘天數
+  Array.prototype.forEach.call(document.querySelectorAll("[data-due]"), function(s){
+    var due = new Date(s.getAttribute("data-due") + "T23:59:59+08:00").getTime();
+    var left = Math.ceil((due - Date.now()) / DAY);
+    s.textContent = left > 0 ? "剩 " + left + " 天" : (left === 0 ? "今天！" : "已過");
+  });
+
+  /* ---------- 3. 每日行程 ---------- */
+  var DAYS = [
+    { d:"1/25（一）", t:"桃園出發", tags:["機上過夜"],
+      rows:[["行程","晚上集合，23:25 長榮飛慕尼黑"],["住","機上"]],
+      wear:"好穿脫的洋蔥式＋舒適長褲；機上會冷可帶薄外套。大外套、毛帽放隨身，抵達慕尼黑清晨約 0°C 上下。" },
+    { d:"1/26（二）", t:"慕尼黑市區", tags:[],
+      rows:[["景點","BMW 世界、奧林匹克公園、新市政廳、瑪麗恩廣場"],["午","德國豬腳"],["晚","自理"],["住","LEONARDO／HOLIDAY INN／NH 或同級"]],
+      wear:"一般冬裝：保暖內層＋毛衣＋大外套、圍巾手套。" },
+    { d:"1/27（三）", t:"飛赫爾辛基 → 極地夜臥火車", tags:["夜臥火車"],
+      rows:[["行程","慕尼黑飛赫爾辛基，搭極地夜臥火車往羅凡尼亞米（二人一室）"],["午","自理"],["晚","發餐費 €15／人"],["住","夜臥火車"]],
+      wear:"好穿脫為主，車廂內有暖氣。<strong>備拖鞋和盥洗包</strong>放小袋子隨身，方便車上使用。" },
+    { d:"1/28（四）", t:"羅凡尼亞米・聖誕老人村", tags:["追極光 第1晚"],
+      rows:[["景點","聖誕老人村（跨北極圈證書、聖誕郵局）"],["午","聖誕老人村風味餐"],["晚","芬蘭風味餐"],["住","羅凡尼亞米（或極光玻璃屋，待確認）"]],
+      wear:"<strong>全副極地裝</strong>：三層洋蔥＋雪褲＋雪靴＋毛帽、脖圍、雙層手套。" },
+    { d:"1/29（五）", t:"哈士奇雪橇・馴鹿雪橇", tags:["追極光 第2晚"],
+      rows:[["景點","哈士奇雪橇、馴鹿雪橇"],["午","中式六菜一湯"],["晚","芬蘭風味餐"],["住","羅凡尼亞米（或極光玻璃屋，待確認）"]],
+      wear:"<strong>雪褲＋全副極地裝</strong>。坐雪橇迎風很冷，脖圍拉高遮臉，暖暖包貼背和腳底。" },
+    { d:"1/30（六）", t:"凱米破冰船＋冰海漂浮", tags:["追極光 第3晚"],
+      rows:[["景點","凱米破冰船、冰海漂浮（穿龍蝦裝，<strong>身高需 140cm 以上</strong>）"],["午晚","芬蘭風味餐"],["住","Scandic Kemi 或同級"]],
+      wear:"<strong>最保暖等級</strong>：全部穿上＋暖暖包。海上甲板風最大，手套和毛帽絕對不能少。" },
+    { d:"1/31（日）", t:"聖誕老人私人見面會 → 飛赫爾辛基", tags:[],
+      rows:[["行程","聖誕老人私人見面會，之後飛赫爾辛基"],["午","中式六菜一湯"],["晚","芬蘭風味餐"],["住","Scandic Grand Marina／Meilahti 或同級"]],
+      wear:"白天戶外仍用極地裝；見面會拍照可穿好看的毛衣在裡面。到赫爾辛基換一般冬裝即可。" },
+    { d:"2/1（一）", t:"飛慕尼黑 → 因戈爾斯塔特購物村", tags:[],
+      rows:[["行程","赫爾辛基飛慕尼黑，前往因戈爾斯塔特購物村 Outlet"],["午","中式"],["晚","自理"]],
+      wear:"一般冬裝，選好穿脫的，方便試穿衣服。" },
+    { d:"2/2（二）", t:"慕尼黑飛桃園", tags:["機上過夜"],
+      rows:[["行程","11:30 長榮慕尼黑飛桃園"],["住","機上"]],
+      wear:"機上舒適穿著；雪靴、雪褲收進託運，換好走的鞋子。" },
+    { d:"2/3（三）", t:"抵達桃園", tags:["回家"],
+      rows:[["行程","06:30 抵達桃園"]],
+      wear:"台灣比芬蘭暖很多，穿薄外套即可，厚外套收進隨身包。" }
+  ];
+
+  var dayList = document.getElementById("dayList");
+  var todayIdx = twDayIndex(Date.now());
+  DAYS.forEach(function(x, i){
+    var c = el("article", "card day" + (todayIdx === i + 1 ? " today" : ""));
+    c.id = "d" + (i + 1);
+    var head = el("div", "dhead");
+    head.appendChild(el("div", "dnum", "D" + (i + 1)));
+    head.appendChild(el("div", "dtitle", '<div class="date">' + x.d + (todayIdx === i + 1 ? '　<span class="tag g">今天</span>' : "") + '</div><div class="name">' + x.t + "</div>"));
+    c.appendChild(head);
+    if (x.tags.length){
+      var tg = el("div", "tags");
+      x.tags.forEach(function(t){
+        tg.appendChild(el("span", "tag " + (t.indexOf("極光") > -1 ? "g" : "v"), t));
+      });
+      c.appendChild(tg);
+    }
+    var ul = el("ul", "rows");
+    x.rows.forEach(function(r){ ul.appendChild(el("li", null, "<b>" + r[0] + "</b><span>" + r[1] + "</span>")); });
+    c.appendChild(ul);
+    c.appendChild(el("div", "outfit", "<strong>👕 當天穿搭：</strong>" + x.wear));
+    dayList.appendChild(c);
+  });
+
+  /* ---------- 通用勾選清單 ---------- */
+  function renderChecklist(listEl, items, keyBase, onChange){
+    listEl.innerHTML = "";
+    items.forEach(function(it){
+      var key = keyBase + ":" + it.id;
+      var li = el("li");
+      var lab = el("label");
+      var cb = el("input");
+      cb.type = "checkbox";
+      cb.checked = store.get(key) === "1";
+      cb.addEventListener("change", function(){
+        if (cb.checked) store.set(key, "1"); else store.del(key);
+        onChange();
+      });
+      var txt = el("span", "txt", it.name + (it.note ? "<em>" + it.note + "</em>" : ""));
+      lab.appendChild(cb);
+      lab.appendChild(txt);
+      if (it.where){
+        lab.appendChild(el("span", "tag" + (it.where === "隨身" ? " carry" : ""), it.where));
+      }
+      li.appendChild(lab);
+      listEl.appendChild(li);
+    });
+  }
+  function countChecked(items, keyBase){
+    var n = 0;
+    items.forEach(function(it){ if (store.get(keyBase + ":" + it.id) === "1") n++; });
+    return n;
+  }
+
+  /* ---------- 4. 行李清單 ---------- */
+  var PERSONAL = [
+    { id:"passport", name:"護照", where:"隨身", note:"效期需到 2027/8/3 以後" },
+    { id:"base", name:"超極暖衛生衣褲 ×3", where:"託運", note:"出發當天身上穿一套" },
+    { id:"fleece", name:"刷毛中層", where:"託運" },
+    { id:"shell", name:"防風防水外套", where:"隨身", note:"抵達慕尼黑馬上要穿" },
+    { id:"snowpants", name:"雪褲", where:"託運", note:"待確認是否租借" },
+    { id:"boots", name:"雪靴", where:"託運", note:"迪卡儂 SH900 等級，買大半號～一號（穿厚襪）" },
+    { id:"wool", name:"美麗諾羊毛襪 ×4–5", where:"託運" },
+    { id:"thinsock", name:"薄排汗襪", where:"託運" },
+    { id:"hat", name:"毛帽（蓋耳）", where:"隨身" },
+    { id:"neck", name:"脖圍／面罩", where:"託運" },
+    { id:"gloves", name:"觸控內層手套＋滑雪手套或連指手套", where:"託運" },
+    { id:"slippers", name:"室內包腳拖鞋", where:"隨身", note:"夜臥火車上會用到" },
+    { id:"tooth", name:"牙刷、牙膏", where:"隨身", note:"牙膏 100ml 以下；飯店不提供" },
+    { id:"lotion", name:"保濕乳液", where:"託運", note:"超過 100ml 放託運，小瓶可隨身" },
+    { id:"lip", name:"護唇膏", where:"隨身" },
+    { id:"meds", name:"個人藥品", where:"隨身" },
+    { id:"power", name:"行動電源（最多 2 個）", where:"隨身", note:"禁止託運；機上禁止使用與充電" }
+  ];
+  var SHARED = [
+    { id:"adapter", name:"歐規雙圓孔轉接頭", where:"隨身" },
+    { id:"warmer", name:"暖暖包（貼式＋手握＋腳底）", where:"託運", note:"每人每天 4–6 片" },
+    { id:"coins", name:"歐元零錢", where:"隨身", note:"公廁付費、床頭小費" },
+    { id:"cmeds", name:"常備藥", where:"隨身" },
+    { id:"umbrella", name:"摺疊傘", where:"託運" }
+  ];
+  var TABS = [
+    { id:"dad", name:"爸爸", items:PERSONAL },
+    { id:"mom", name:"媽媽", items:PERSONAL },
+    { id:"sis", name:"姊姊", items:PERSONAL },
+    { id:"me",  name:"我",   items:PERSONAL },
+    { id:"all", name:"全家共用", items:SHARED }
+  ];
+
+  var tabsEl = document.getElementById("packTabs");
+  var packList = document.getElementById("packList");
+  var current = store.get("tab") || "dad";
+  if (!TABS.some(function(t){ return t.id === current; })) current = "dad";
+
+  function tabById(id){ for (var i = 0; i < TABS.length; i++) if (TABS[i].id === id) return TABS[i]; return TABS[0]; }
+
+  function renderTabs(){
+    tabsEl.innerHTML = "";
+    TABS.forEach(function(t){
+      var b = el("button");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", t.id === current ? "true" : "false");
+      b.innerHTML = t.name + '<span class="cnt">' + countChecked(t.items, "pack:" + t.id) + "/" + t.items.length + "</span>";
+      b.addEventListener("click", function(){
+        current = t.id;
+        store.set("tab", current);
+        renderPack();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
+  function updatePackProgress(){
+    var t = tabById(current);
+    var n = countChecked(t.items, "pack:" + t.id);
+    document.getElementById("packProg").textContent = t.name + "：已打包 " + n + " / " + t.items.length + (n === t.items.length ? " 🎉" : "");
+    document.getElementById("packBar").style.width = (n / t.items.length * 100) + "%";
+    renderTabs();
+  }
+  function renderPack(){
+    var t = tabById(current);
+    renderChecklist(packList, t.items, "pack:" + t.id, updatePackProgress);
+    updatePackProgress();
+  }
+  document.getElementById("packReset").addEventListener("click", function(){
+    var t = tabById(current);
+    if (!window.confirm("確定要清除「" + t.name + "」的所有勾選嗎？")) return;
+    t.items.forEach(function(it){ store.del("pack:" + t.id + ":" + it.id); });
+    renderPack();
+  });
+  renderPack();
+
+  /* ---------- 8. 待旅行社確認 ---------- */
+  var CONFIRM = [
+    { id:"pay", name:"正取與尾款" },
+    { id:"gear", name:"雪橇業者是否借雪衣、雪靴" },
+    { id:"igloo", name:"極光玻璃屋是哪一晚（D4–D6）" },
+    { id:"train", name:"夜臥火車設備（盥洗、插座、毛巾）" },
+    { id:"domestic", name:"國內線行李限制" },
+    { id:"handwarmer", name:"充電暖手寶算不算行動電源" },
+    { id:"float", name:"冰海漂浮年齡限制" },
+    { id:"santa", name:"聖誕老人拍照是否收費" },
+    { id:"optional", name:"自費項目" },
+    { id:"insurance", name:"保險" }
+  ];
+  var cfList = document.getElementById("cfList");
+  function updateCf(){
+    var n = countChecked(CONFIRM, "cf");
+    document.getElementById("cfProg").textContent = "已確認 " + n + " / " + CONFIRM.length;
+    document.getElementById("cfBar").style.width = (n / CONFIRM.length * 100) + "%";
+  }
+  renderChecklist(cfList, CONFIRM, "cf", updateCf);
+  updateCf();
+  document.getElementById("cfReset").addEventListener("click", function(){
+    if (!window.confirm("確定要清除所有「待確認」勾選嗎？")) return;
+    CONFIRM.forEach(function(it){ store.del("cf:" + it.id); });
+    renderChecklist(cfList, CONFIRM, "cf", updateCf);
+    updateCf();
+  });
+})();
+</script>
+</body>
+</html>
